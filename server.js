@@ -48,6 +48,17 @@ function getObj(obj, pathArr){
     return data;
 }
 
+function getValueByPath(obj, path){ // obj - объект где искать , path - массива пути к свойству 
+    let data=obj;
+    for(let key of path){
+        if(!key) break; //если пустой ключ - выходим, возвращаем результат последней итерации
+        if(data.constructor()[key] !== void(0)) return void(0); //если стандартное свойство объекта - выходим
+        data = data[key];
+        if(data == void(0)) break; //если значения нет - выходим
+    }
+    return data;
+}
+
 
 
 app.get('/volumes', (req, res)=>{
@@ -63,7 +74,8 @@ app.get('/volumes', (req, res)=>{
 
 app.get(/[\w\/]*/, (req, res) => {
     let patch = (req.url.slice(1)).split('/');
-    let result = getObj(pc, patch);
+    //let result = getObj(pc, patch);
+    let result = getValueByPath(pc, patch);
     if(typeof result == "undefined") throw new Error('No data');
     else res.send(JSON.stringify(result));
 });
