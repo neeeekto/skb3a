@@ -27,27 +27,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-function getObj(obj, pathArr){
-    let data=obj, flagExit = false;
-    pathArr.forEach((el) => {
-        debugger;
-        if(!el) {
-           flagExit = true; 
-        }
-        else{
-            if(!flagExit){
-                if(data.constructor()[el] !== undefined){
-                    data = void(0);
-                }
-                data = data[el];
-                if(data == void(0)) flagExit = true;
-            }
-        }
-    })
-    return data;
-}
-
 function getValueByPath(obj, path){ // obj - объект где искать , path - массива пути к свойству 
     let data=obj;
     for(let key of path){
@@ -72,9 +51,8 @@ app.get('/volumes', (req, res)=>{
     res.status(200).send(JSON.stringify(data));
 });
 
-app.get(/[\w\/]*/, (req, res) => {
+app.get(/[\w\/-]*/, (req, res) => {
     let patch = (req.url.slice(1)).split('/');
-    //let result = getObj(pc, patch);
     let result = getValueByPath(pc, patch);
     if(typeof result == "undefined") throw new Error('No data');
     else res.send(JSON.stringify(result));
